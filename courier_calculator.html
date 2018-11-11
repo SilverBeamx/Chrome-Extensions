@@ -1,0 +1,215 @@
+<!doctype html><HTML><HEAD><TITLE>Courier Contract Calculator</TITLE>
+<link rel="stylesheet" href="/css/bootstrap.min.css">
+<link rel="stylesheet" href="/css/datatables.min.css">
+<link rel="stylesheet" href="/css/karkinos.css">
+
+<script src="/js/jquery-3.2.1.min.js"></script>
+<script src="/js/popper.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/datatables.min.js"></script>
+<style>
+  .navbar-brand, .nav, .nav-item {
+    background-color: #343A40;
+    color: #868e96;
+  }
+  body {background-image: url("/img/bg-2.png");}</style></HEAD><BODY><div class="container col-md-12"><IMG SRC=/img/blank.png HEIGHT=60 WIDTH=1></div><link rel="icon" href="img/favicon.ico" type="image/x-icon" /><div class="container col-md-12 text-muted text-right">Current Queues <small>(updated every 15 mins)</small>: Jita->Pocket: 179,012.46<FONT SIZE=-2>m3</FONT> Pocket->Jita: 1,258,199.62<FONT SIZE=-2>m3</FONT> Buyback: 1,056,121,656.00<FONT SIZE=-2>ISK</FONT></div><div class="container col-md-12"><IMG SRC=/img/blank.png HEIGHT=10 WIDTH=1></div><nav class="navbar fixed-top navbar-expand-lg navbar-dark bg-dark" style="height: 44px;"><a class="navbar-brand" href="/"><IMG SRC="/img/karkinos.png" HEIGHT=32 WIDTH=40></a><ul class="navbar-nav mr-auto mt-2 mt-lg-0"><li class="nav-item dropdown"><a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown"><STRONG>Karkinos</STRONG><b class="caret"></b></a><div class="dropdown-menu" id="dropdown"><a class="dropdown-item" href="?team=2">Karkinos</a><a class="dropdown-item" href="?team=1">Carcinus</a></div></li></ul><button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar_items" aria-controls="navbar_items" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button><div class="collapse navbar-collapse" id="navbar_items"><ul class="navbar-nav mr-auto mt-2 mt-lg-0"><li class="nav-item"><a class="nav-link" href="/stats"><nobr>Stats</nobr></a></li><li class="nav-item dropdown"><a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown">Buyback<b class="caret"></b></a><div class="dropdown-menu" id="dropdown_2"><a class="dropdown-item" href="/appraisal"><nobr>Contract Appraisal</nobr></a></div></li><li class="nav-item dropdown"><a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown">Courier<b class="caret"></b></a><div class="dropdown-menu" id="dropdown_1"><a class="dropdown-item" href="/courier_calculator"><nobr>Courier Calculator</nobr></a><a class="dropdown-item" href="/courier_routes"><nobr>Courier Routes</nobr></a><a class="dropdown-item" href="/courier_howto"><nobr>Courier HOWTO</nobr></a></div></li><li class="nav-item"><a class="nav-link" href="https://discord.gg/mCTUV7C" TARGET="_blank"><nobr>Discord <span class="glyphicon glyphicon-share" aria-hidden="true"></span></nobr></a></li><li class="nav-item"><a class="nav-link" href="https://www.pandemic-legion.pl/forums/topic/10874-karkinos-buyback-and-shipping-services/" TARGET="_blank"><nobr>Official Thread <span class="glyphicon glyphicon-share" aria-hidden="true"></span></nobr></a></li><li class="nav-item"><a class="nav-link" href="/privacy"><nobr>Privacy</nobr></a></li></ul><ul class="nav navbar-nav navbar-right"><li><span class="navbar-text"><nobr><A HREF="b?login">Login</A></nobr></span></li></ul></div></nav>
+<div class="container"><form class="form-horizontal">
+  <div class="form-group row"><label for="startStationId" class="col-sm-2 control-label">Start Location</label><div class="col-sm-8"><select id=startStationId class="form-control" onChange="changeStart();changeColVol();"><option value="error">Waiting for JavaScript to load...</option></select></div></div>
+  <div class="form-group row"><label for="endStationId"   class="col-sm-2 control-label">Destination</label><div class="col-sm-8"><select id=endStationId class="form-control" onChange="changeEnd();changeColVol();"></select></div></div>
+  <div class="form-group row"><div id=details class="col-sm-12" align=center></div></div>
+  <div class="form-group row"><div class="col-sm-2" align=center></div><div class="col-sm-4"><label for="collateral" class="control-label">Collateral (ISK)</label><input type="text" class="form-control" id="collateral" placeholder="Enter Collateral" onChange="changeColVol()"></div><div class="col-sm-4"><label for="volume" class="control-label">Volume (m3)</label><input type="text" class="form-control" id="volume" placeholder="Enter Total m3" onChange="changeColVol()"></div></div>
+  <div class="form-group row"></div>
+  <div class="form-group row"><label for="evepraisal" class="col-sm-2 control-label">Evepraisal</label><div class="col-sm-6"><input type="text" class="form-control" id="evepraisal" placeholder="https://evepraisal.com/a/....."></div><div id=col class="col-sm-2"><button type="button" onClick="getEvepraisal(event);return false;" class="btn btn-success" style="width:100%;">Get Evepraisal</button></div></div>
+  <div class="form-group row"><div id=evepraisalResult class="col-sm-12" align=center></div></div>
+  <div class="form-group row"><div id=reward class="col-sm-12" align=center></div></div>
+
+</form>
+
+</TABLE>
+</FORM>
+</div>
+  <SCRIPT LANGUAGE=JavaScript><!--
+var stn_names = {};
+    var routes = {};
+    stn_names['1025932417522']=["7RM-N0 - All Reactions - T2 Rigged",60003760];
+stn_names['1021577519493']=["7RM-N0 - B E A N S T A R",60003760,1021695212251,1022607993474,1022847969432,1023949439221,1024176961687];
+stn_names['1022847969432']=["B-9C24 - BAEWATCH Montreal",60003760,1021577519493,1021695212251];
+stn_names['1024176961687']=["C4C-Z4 - K R A B S T A R",60003760,1021577519493,1021695212251];
+stn_names['1026078872370']=["C4C-Z4 - Reactions",60003760];
+stn_names['1021695212251']=["GME-PQ - FORT Hall of Justice",60003760,1021577519493,1022847969432,1024176961687];
+stn_names['60003760']=["Jita IV - Moon 4 - Caldari Navy Assembly Plant",1021577519493,1021695212251,1022607993474,1022847969432,1023949439221,1024176961687,1025932417522,1026078872370];
+stn_names['1022607993474']=["M-OEE8 - PH astra",1021577519493];
+stn_names['1023949439221']=["RQH-MY - FORT Gates of Pure Blind",60003760,1021577519493];
+routes['60003760t1021577519493']=[0.0150,440,325000];
+routes['60003760t1021695212251']=[0.0150,540,325000];
+routes['60003760t1022607993474']=[0.0150,440,325000];
+routes['60003760t1022847969432']=[0.0150,540,325000];
+routes['60003760t1023949439221']=[0.0150,440,325000];
+routes['60003760t1024176961687']=[0.0150,540,325000];
+routes['60003760t1025932417522']=[0.0150,440,325000];
+routes['60003760t1026078872370']=[0.0150,540,325000];
+routes['1021577519493t60003760']=[0.0150,440,325000];
+routes['1021577519493t1021695212251']=[0.0100,100,325000];
+routes['1021577519493t1022607993474']=[0.0150,440,325000];
+routes['1021577519493t1022847969432']=[0.0100,100,325000];
+routes['1021577519493t1023949439221']=[0.0100,100,325000];
+routes['1021577519493t1024176961687']=[0.0100,100,325000];
+routes['1021695212251t60003760']=[0.0150,540,325000];
+routes['1021695212251t1021577519493']=[0.0100,100,325000];
+routes['1021695212251t1022847969432']=[0.0100,100,325000];
+routes['1021695212251t1024176961687']=[0.0100,100,325000];
+routes['1022607993474t1021577519493']=[0.0150,440,325000];
+routes['1022847969432t60003760']=[0.0150,540,325000];
+routes['1022847969432t1021577519493']=[0.0100,100,325000];
+routes['1022847969432t1021695212251']=[0.0100,100,325000];
+routes['1023949439221t60003760']=[0.0150,440,325000];
+routes['1023949439221t1021577519493']=[0.0100,100,325000];
+routes['1024176961687t60003760']=[0.0150,540,325000];
+routes['1024176961687t1021577519493']=[0.0100,100,325000];
+routes['1024176961687t1021695212251']=[0.0100,100,325000];
+routes['1025932417522t60003760']=[0.0150,440,325000];
+routes['1026078872370t60003760']=[0.0150,540,325000];
+    function sISK(isk) {
+      //var tmp = parseFloat(isk);
+      if (parseFloat(isk) >= 1000000000) {
+        return isk.toFixed(2).replace(/./g, function (c, i, a) {
+          return i && c !== "." && ((a.length - i) % 3 === 0) ? ',' + c : c;
+        }) + " ISK (" + (isk / 1000000000).toFixed(2).replace(/./g, function (c, i, a) {
+          return i && c !== "." && ((a.length - i) % 3 === 0) ? ',' + c : c;
+        }) + "b)";
+      }
+      if (parseFloat(isk) >= 1000000) {
+        return isk.toFixed(2).replace(/./g, function (c, i, a) {
+          return i && c !== "." && ((a.length - i) % 3 === 0) ? ',' + c : c;
+        }) + " ISK (" + (isk / 1000000).toFixed(2).replace(/./g, function (c, i, a) {
+          return i && c !== "." && ((a.length - i) % 3 === 0) ? ',' + c : c;
+        }) + "m)";
+      }
+      if (parseFloat(isk) >= 1000) {
+        return isk.toFixed(2).replace(/./g, function (c, i, a) {
+          return i && c !== "." && ((a.length - i) % 3 === 0) ? ',' + c : c;
+        }) + " ISK (" + (isk / 1000).toFixed(2).replace(/./g, function (c, i, a) {
+          return i && c !== "." && ((a.length - i) % 3 === 0) ? ',' + c : c;
+        }) + "k)";
+      }
+      return isk.toFixed(2).replace(/./g, function (c, i, a) {
+        return i && c !== "." && ((a.length - i) % 3 === 0) ? ',' + c : c;
+      }) + " ISK";
+    }
+
+    function sVOL(vol) {
+      //var tmp = parseFloat(vol);
+      if (parseFloat(vol) >= 1000) {
+        return vol.toFixed(2).replace(/./g, function (c, i, a) {
+          return i && c !== "." && ((a.length - i) % 3 === 0) ? ',' + c : c;
+        }) + "m3 (" + (vol / 1000).toFixed(2).replace(/./g, function (c, i, a) {
+          return i && c !== "." && ((a.length - i) % 3 === 0) ? ',' + c : c;
+        }) + "k)";
+      }
+      return vol.toFixed(2).replace(/./g, function (c, i, a) {
+        return i && c !== "." && ((a.length - i) % 3 === 0) ? ',' + c : c;
+      }) + "m3";
+    }
+
+
+    var epLink = document.getElementById("evepraisal");
+    var epResult = document.getElementById("evepraisalResult");
+    var startStation = document.getElementById("startStationId");
+    var endStation = document.getElementById("endStationId");
+    var contractDetails = document.getElementById("details");
+    var collateralBox = document.getElementById("collateral");
+    var volumeBox = document.getElementById("volume");
+    var rewardDetails = document.getElementById("reward");
+    var reward = 0;
+    startStation.innerHTML = "";
+    for (var i in stn_names) {
+      var el = document.createElement("option");
+      el.textContent = stn_names[i][0];
+      el.value = i;
+      startStation.appendChild(el);
+    }
+    function changeStart() {
+      var nVal = startStation.value;
+      endStation.innerHTML = "";
+      for (i = 1; i < stn_names[nVal].length; i++) {
+        var es = document.createElement("option");
+        es.textContent = stn_names[stn_names[nVal][i]][0];
+        es.value = stn_names[nVal][i];
+        endStation.appendChild(es);
+      }
+      changeEnd();
+    }
+    function changeEnd() {
+      var sVal = startStation.value + "t" + endStation.value;
+      contractDetails.innerHTML = (routes[sVal][0] * 100) + "% of Collateral, " + routes[sVal][1] + "isk/m3, " + routes[sVal][2] + "m3 Limit";
+    }
+    function changeColVol() {
+      var vol = parseFloat(volumeBox.value.replace(/m3/, '').replace(/[^0-9.]+/g, ''));
+      if (isNaN(vol)) {
+        vol = 0;
+      }
+      volumeBox.value = vol.toFixed(2).replace(/./g, function (c, i, a) {
+        return i && c !== "." && ((a.length - i) % 3 === 0) ? ',' + c : c;
+      });
+      var col = parseFloat(collateralBox.value.replace(/[^0-9.]+/g, ''));
+      if (isNaN(col)) {
+        col = 0;
+      }
+      collateralBox.value = col.toFixed(2).replace(/./g, function (c, i, a) {
+        return i && c !== "." && ((a.length - i) % 3 === 0) ? ',' + c : c;
+      });
+      var sVal = startStation.value + "t" + endStation.value;
+      if (col > 5000000000) {
+        alert("Sorry, this route has a maximum Collateral limit of 5,000,000,000.00 (5.00b) ISK\nIf you need more, please talk to one of our Contractors on our Public Discord.");
+        collateralBox.value = 5000000000;
+        var col = parseFloat(collateralBox.value);
+      }
+      if (vol > routes[sVal][2]) {
+        alert("Sorry, this route has a maximum m3 limit of " + sVOL(routes[sVal][2]));
+        volumeBox.value = routes[sVal][2];
+        var vol = parseFloat(volumeBox.value);
+      }
+      reward = (col * routes[sVal][0]) + (vol * routes[sVal][1]);
+      if (reward > 0) {
+        rewardDetails.innerHTML = "<FONT SIZE=+1><B>Reward: " + sISK(reward) + "</B></FONT>";
+        } else {
+        rewardDetails.innerHTML = "";
+        }
+    }
+    changeStart();
+    endStation.value = 1021695212251;
+
+
+    function getEvepraisal(event) {
+      var e = event.target;
+      e.disabled = !0;
+      epLink.disabled = !0;
+      var ruri = "b?getevepraisal." + epLink.value;
+      epLink.value = '';
+      (t = new XMLHttpRequest).onreadystatechange = function () {
+        if (4 == this.readyState && 200 == this.status) {
+          var result = JSON.parse(this.responseText);
+          if ('error' in result) {
+            alert("Error: " + result.error);
+            e.disabled = 0;
+            epLink.disabled = 0;
+          } else {
+            e.disabled = 0;
+            epLink.disabled = 0;
+            collateralBox.value = result.jita_sell;
+            volumeBox.value = result.volume;
+            changeColVol();
+            evepraisalResult.innerHTML = "Evepraisal ID: " + result.id + " AGE: " + result.age_str + "<BR>Jita Buy: " + result.jita_buy_str + "<BR>Jita Sell:" + result.jita_sell_str + "<BR>Volume: " + result.volume_str;
+          }
+        }
+      };
+      t.open("GET", ruri, !0);
+      t.send();
+    }
+
+
+//-->
+</SCRIPT>
+
+
+<div class="container col-md-12"><IMG SRC=/img/blank.png HEIGHT=60 WIDTH=1></div><span>[6.6628][14.0600][3.0091]</span><DIV class="col-md-12" style="background-color: #343a40; border-top: 1px solid rgba(0, 0, 0, 0.6); border-color: #080808;"><span style="color:#707070;font-size:12px;">&copy; Copyright 2017 Michael Cunningham. All Rights Reserved<BR>EVE Online and the EVE logo are the registered trademarks of CCP hf. All rights are reserved worldwide. All other trademarks are the property of their respective owners. EVE Online, the EVE logo, EVE and all associated logos and designs are the intellectual property of CCP hf. All artwork, screenshots, characters, vehicles, storylines, world facts or other recognizable features of the intellectual property relating to these trademarks are likewise the intellectual property of CCP hf. CCP hf. has granted permission to Karkinos.co to use EVE Online and all associated logos and designs for promotional and information purposes on its website but does not endorse, and is not in any way affiliated with, Karkinos.co. CCP is in no way responsible for the content on or functioning of this website, nor can it be liable for any damage arising from the use of this website.</span></DIV></BODY></HTML>

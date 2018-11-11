@@ -1,0 +1,24 @@
+{
+  "name": "Youtube Converter NoPop",
+  "version": "2.0",
+  "description": "Convert youtube videos using convert2mp3.com (no popup version)",
+  "background": {
+    "scripts": ["script.js","background.js"],
+    "persistent": false
+  },
+  "content_scripts": [
+    {
+      "matches": ["http://convert2mp3.net/en/index.php?url=https://www.youtube.com/watch?v=*"],
+      "js": ["converter.js"]
+    }
+  ],
+  "page_action" :
+  {
+    "default_title" : "Youtube Converter"
+  },
+  "permissions" : [
+    "declarativeContent",
+    "tabs"
+  ],
+  "manifest_version": 2
+}

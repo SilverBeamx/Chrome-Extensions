@@ -1,0 +1,19 @@
+{
+  "name": "Youtube Converter",
+  "version": "1.0",
+  "description": "Convert youtube videos using convert2mp3.com",
+  "background": {
+    "scripts": ["background.js","script.js"],
+    "persistent": false
+  },
+  "page_action" :
+  {
+    "default_title" : "Youtube Converter",
+    "default_popup": "popup.html"
+  },
+  "permissions" : [
+    "declarativeContent",
+    "tabs"
+  ],
+  "manifest_version": 2
+}

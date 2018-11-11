@@ -1,0 +1,19 @@
+{
+  "name": "Horde's Moon Goo Pricing",
+  "description": "This extension reports various data on moon goo directly on the Chunk Extraction Calendar",
+  "version": "1.0",
+  "permissions": [
+    "activeTab",
+    "https://evepraisal.com/"
+  ],
+  "content_scripts": [
+    {
+      "matches": ["http://vanguard.arelity.com/mining/"],
+      "js": ["xmlHttp.js","ore-evaluation.js","toggle-button.js","mode-button.js","footer.js","content-script.js"]
+    }
+  ],
+  "browser_action": {
+    "default_title": "Horde's Moon Goo Pricing Extension"
+  },
+  "manifest_version": 2
+}

@@ -1,0 +1,32 @@
+{
+  "name": "Spotify MP3 Finder",
+  "version": "1.0",
+  "description": "Find the current playing song from Spotify on youtube and convert it using convert2mp3.com (no popup version)",
+  "background": {
+    "scripts": ["background.js"],
+    "persistent": false
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://open.spotify.com/*"],
+      "js": ["spotify.js"]
+    },
+    {
+      "matches": ["https://www.youtube.com/results?search_query=*"],
+      "js": ["youtube.js"]
+    },
+    {
+      "matches": ["http://convert2mp3.net/en/index.php?url=https://www.youtube.com/watch?v=*"],
+      "js": ["convert.js"]
+    }
+  ],
+  "page_action" :
+  {
+    "default_title" : "Spotify MP3 Finder"
+  },
+  "permissions" : [
+    "declarativeContent",
+    "tabs"
+  ],
+  "manifest_version": 2
+}
